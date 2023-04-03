@@ -19,8 +19,8 @@ describe('Expire Cache', () => {
 		expect(cache.get('key')).to.equal('value');
 	});
 	it('should return undefined value if expired', async () => {
-		cache.set('key', 'value', 1);
-		await new Promise((resolve) => setTimeout(resolve, 100));
+		cache.set('key', 'value', new Date(Date.now() + 1)); // epires in 1ms
+		await new Promise((resolve) => setTimeout(resolve, 10));
 		expect(cache.get('key')).to.be.undefined;
 	});
 	it('should return undefined value if deleted', async () => {

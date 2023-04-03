@@ -4,9 +4,9 @@ export interface ICache<Payload, Key = string> {
 	 */
 	get(key: Key): Payload | undefined;
 	/**
-	 * Set cached value and optional time to live in milliseconds
+	 * Set cached value and optional expire Date object
 	 */
-	set(key: Key, value: Payload, timeToLive?: number): void;
+	set(key: Key, value: Payload, expires?: Date): void;
 	/**
 	 * Delete cached value
 	 */

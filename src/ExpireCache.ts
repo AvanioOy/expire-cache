@@ -1,9 +1,9 @@
 import {ICache} from './interfaces/ICache';
 
 export class ExpireCache<Payload, Key = string> implements ICache<Payload, Key> {
-	private cache = new Map<Key, {data: Payload; expires: number}>();
-	public set(key: Key, data: Payload, expires: number) {
-		this.cache.set(key, {data, expires});
+	private cache = new Map<Key, {data: Payload; expires: number | undefined}>();
+	public set(key: Key, data: Payload, expires?: Date) {
+		this.cache.set(key, {data, expires: expires?.getTime()});
 	}
 
 	public get(key: Key) {
@@ -26,7 +26,7 @@ export class ExpireCache<Payload, Key = string> implements ICache<Payload, Key> 
 	private cleanExpired() {
 		const now = new Date().getTime();
 		for (const [key, value] of this.cache.entries()) {
-			if (value.expires < now) {
+			if (value.expires !== undefined && value.expires < now) {
 				this.cache.delete(key);
 			}
 		}
