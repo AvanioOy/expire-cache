@@ -1,6 +1,6 @@
 {
   "name": "@avanio/expire-cache",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Typescript/Javascript cache with expiration",
   "main": "./dist/index.js",
   "scripts": {
@@ -14,19 +14,19 @@
   "mocha": {
     "exit": true,
     "extension": [
-        "ts",
-        "js"
+      "ts",
+      "js"
     ],
     "recursive": true,
     "require": [
-        "ts-node/register",
-        "source-map-support/register"
+      "ts-node/register",
+      "source-map-support/register"
     ],
     "reporters": [
-        "spec",
-        "mocha-junit-reporter"
+      "spec",
+      "mocha-junit-reporter"
     ]
-},
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AvanioOy/expire-cache.git"
