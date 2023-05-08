@@ -1,7 +1,7 @@
 /**
  * Cache interface
  * @example
- * functon foo(cache: ICache<string>) {
+ * function foo(cache: ICache<string>) {
  * 	const value = cache.get('key');
  * 	cache.set('key', 'value');
  * 	cache.delete('key');
@@ -30,7 +30,7 @@ export interface ICache<Payload, Key = string> {
 /**
  * Async cache interface
  * @example
- * functon foo(cache: IAsyncCache<string>) {
+ * function foo(cache: IAsyncCache<string>) {
  * 	const value = await cache.get('key');
  * 	await cache.set('key', 'value');
  * 	await cache.delete('key');
@@ -59,7 +59,7 @@ export interface IAsyncCache<Payload, Key = string> {
 /**
  * Combine sync or async cache types
  * @example
- * functon foo(cache: TAnyCache<string>) {
+ * function foo(cache: TAnyCache<string>) {
  * 	const value = await cache.get('key');
  * 	await cache.set('key', 'value');
  * }

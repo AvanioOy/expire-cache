@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'mocha';
 import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {IAsyncCache, TAnyCache} from '../src/';
+import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
