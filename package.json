@@ -75,6 +75,6 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@avanio/logger-like": "^0.0.5"
+    "@avanio/logger-like": "^0.0.7"
   }
 }
