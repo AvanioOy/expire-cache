@@ -47,7 +47,7 @@ function useCache(cache: TAnyCache<string>) {
 }
 ```
 
-### Advanced logging example, see [default log levels](./src/ExpireCache.ts#L4)
+### Advanced logging example, see [default log mapping](./src/ExpireCache.ts#L4)
 
 ```typescript
 const cache = new ExpireCache<string>(console, {

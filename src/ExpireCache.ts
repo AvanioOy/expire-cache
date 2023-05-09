@@ -2,15 +2,16 @@ import {ILoggerLike, LogLevel, LogMapping, MapLogger} from '@avanio/logger-like'
 import {ICache} from './interfaces/ICache';
 
 /**
- * Default log map for ExpireCache (all logs to trace level)
+ * Default log map for ExpireCache method calls (no logs)
  */
 const defaultLogMap = {
-	cleanExpired: LogLevel.Trace,
-	clear: LogLevel.Trace,
-	delete: LogLevel.Trace,
-	get: LogLevel.Trace,
-	set: LogLevel.Trace,
-	size: LogLevel.Trace,
+	cleanExpired: LogLevel.None,
+	clear: LogLevel.None,
+	constructor: LogLevel.None,
+	delete: LogLevel.None,
+	get: LogLevel.None,
+	set: LogLevel.None,
+	size: LogLevel.None,
 } as const;
 
 export type ExpireCacheLogMapType = LogMapping<keyof typeof defaultLogMap>;
@@ -27,6 +28,7 @@ export class ExpireCache<Payload, Key = string> extends MapLogger<ExpireCacheLog
 	 */
 	constructor(logger?: ILoggerLike, logMapping?: Partial<ExpireCacheLogMapType>, defaultExpireMs?: number) {
 		super(logger, Object.assign({}, defaultLogMap, logMapping));
+		this.logKey('constructor', `ExpireCache created, defaultExpireMs: ${defaultExpireMs}`);
 		this.defaultExpireMs = defaultExpireMs;
 	}
 
