@@ -28,6 +28,7 @@ const logLevelMap: ExpireCacheLogMapType = {
 	delete: LogLevel.Trace,
 	get: LogLevel.Trace,
 	set: LogLevel.Trace,
+	has: LogLevel.Trace,
 	size: LogLevel.Trace,
 };
 
@@ -54,11 +55,13 @@ describe('Expire Cache', () => {
 		cache.set('key', 'value');
 		expect(cache.size()).to.be.equal(1);
 		expect(cache.get('key')).to.equal('value');
-		expect(traceSpy.callCount).to.be.equal(4);
+		expect(cache.has('key')).to.equal(true);
+		expect(traceSpy.callCount).to.be.equal(5);
 		expect(traceSpy.getCall(0).firstArg).to.be.equal('ExpireCache created, defaultExpireMs: undefined');
 		expect(traceSpy.getCall(1).firstArg).to.be.equal('ExpireCache set key: key, expireTs: undefined');
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireCache size: 1');
 		expect(traceSpy.getCall(3).firstArg).to.be.equal('ExpireCache get key: key');
+		expect(traceSpy.getCall(4).firstArg).to.be.equal('ExpireCache has key: key');
 	});
 	it('should return undefined value if expired', async () => {
 		cache.set('key', 'value', new Date(Date.now() + 1)); // epires in 1ms

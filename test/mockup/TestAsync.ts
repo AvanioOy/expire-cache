@@ -12,6 +12,11 @@ export class TestAsync<Payload, Key = string> implements IAsyncCache<Payload, Ke
 		return Promise.resolve(this.cache.get(key)?.data);
 	}
 
+	public has(key: Key): Promise<boolean> {
+		this.cleanExpired();
+		return Promise.resolve(this.cache.has(key));
+	}
+
 	public delete(key: Key) {
 		return Promise.resolve(this.cache.delete(key));
 	}

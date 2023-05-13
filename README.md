@@ -6,43 +6,47 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a35459a312c189018ad0/test_coverage)](https://codeclimate.com/github/AvanioOy/expire-cache/test_coverage)
 ![github action](https://github.com/AvanioOy/expire-cache/actions/workflows/main.yml/badge.svg?branch=main)
 
-Typescript/Javascript Cache interfaces and expiration cache class.
+Typescript/Javascript cache interfaces and expiration cache class.
 
 This package contains: 
-- **_[ICache](./src/interfaces/ICache.ts)_** common cache interface
-- **_[IAsyncCache](./src/interfaces/IAsyncCache.ts)_** common async cache interface
-- **_[TAnyCache](./src/interfaces/TAnyCache.ts)_** type for both common cache interfaces
-- **_[ExpireCache](./src/ExpireCache.ts)_** class which implements ICache interface with value expiration
+- **_[ICache](./src/interfaces/ICache.ts)_** a common cache interface
+- **_[IAsyncCache](./src/interfaces/IAsyncCache.ts)_** a common async cache interface
+- **_[ICacheOrAsync](./src/interfaces/ICacheOrAsync.ts)_** a type for both cache interfaces
+- **_[ExpireCache](./src/ExpireCache.ts)_** a class which implements the ICache interface with value expiration
 
 ## examples
 
-Synchronous example
+### Synchronous example:
 
 ```typescript
 import {ICache, ExpireCache} from '@avanio/expire-cache';
 
 const cache = new ExpireCache<string>();
 
-cache.add('key', 'value', new Date(Date.now() + 1000)); // expires 1000ms
+cache.add('key', 'value', new Date(Date.now() + 1000)); // expires in 1000ms
 cache.add('key2', 'value2'); // never expires (if no default expiration is set)
 
 cache.get('key'); // 'value'
 
+cache.has('key'); // true
+
 cache.delete('key');
 
 cache.clear();
+
+cache.size(); // 1
 
 function useCache(cache: ICache<string>) {
 	const value = cache.get('key'); // 'value'
 }
 ```
 
-### Synchronous/Asynchronous example (works with both ICache and IAsyncCache interfaces)
+### Synchronous/Asynchronous example (works with both ICache and IAsyncCache interfaces):
 
 ```typescript
-import {TAnyCache} from '@avanio/expire-cache';
+import {ICacheOrAsync} from '@avanio/expire-cache';
 
-function useCache(cache: TAnyCache<string>) {
+function useCache(cache: ICacheOrAsync<string>) {
 	const value = await cache.get('key'); // 'value'
 }
 ```
@@ -56,7 +60,7 @@ const cache = new ExpireCache<string>(console, {
 });
 ```
 
-### (optional) default expiration in milliseconds if not specified in add() method. (if both are undefined, cache entry never expires)
+### (Optional) default expiration in milliseconds if not specified in add() method. (If both are undefined, cache entry never expires):
 
 ```typescript
 const cache = new ExpireCache<string>(console, undefined, 60 * 1000); // sets default 60 seconds expiration for add() method
