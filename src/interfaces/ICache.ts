@@ -12,27 +12,43 @@
  */
 export interface ICache<Payload, Key = string> {
 	/**
-	 * Get cached value or undefined if not found in cache
+	 * Gets a value from the cache
+	 * @param key - The key to get the value for
+	 * @returns The cached value or undefined if not found
 	 */
 	get(key: Key): Payload | undefined;
 	/**
-	 * Set cached value and optional expiration Date object
+	 * Sets a value in the cache with an optional expiration date
+	 * @param key - The key to set the value for
+	 * @param data - The data to set in the cache
+	 * @param expires - The optional expiration date for the cache entry
 	 */
 	set(key: Key, value: Payload, expires?: Date): void;
 	/**
-	 * Delete cached value
+	 * Deletes a value from the cache
+	 * @param key - The key to delete the value for
+	 * @returns {boolean} True if the value was deleted, false otherwise
 	 */
 	delete(key: Key): boolean;
 	/**
-	 * Check if a key exists in the cache
+	 * Checks if a key exists in the cache
+	 * @param key - The key to check for
+	 * @returns {boolean} True if the key exists in the cache, false otherwise
 	 */
 	has(key: Key): boolean;
+	/**
+	 * Get key expiration Date object or undefined if not found in cache
+	 * @param key - The key to get the expiration for
+	 * @returns {Date | undefined} Date object or undefined if not found in cache
+	 */
+	expires(key: Key): Date | undefined;
 	/**
 	 * Clear all cached values
 	 */
 	clear(): void;
 	/**
-	 * Get the number of items in the cache
+	 * Gets the number of items in the cache
+	 * @returns {number} The number of items in the cache
 	 */
 	size(): number;
 }

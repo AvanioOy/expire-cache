@@ -12,27 +12,44 @@
  */
 export interface IAsyncCache<Payload, Key = string> {
 	/**
-	 * Get cached value or undefined if not found in cache
+	 * Gets a value from the cache
+	 * @param key - The key to get the value for
+	 * @returns {Promise<Payload | undefined>} Promise of the cached value or undefined if not found
 	 */
 	get(key: Key): Promise<Payload | undefined>;
 	/**
-	 * Set cached value and optional expiration Date object
+	 * Sets a value in the cache with an optional expiration date
+	 * @param key - The key to set the value for
+	 * @param data - The data to set in the cache
+	 * @param expires - The optional expiration date for the cache entry
+	 * @returns {Promise<void>} Promise of void
 	 */
 	set(key: Key, value: Payload, expires?: Date): Promise<void>;
 	/**
-	 * Delete cached value
+	 * Deletes a value from the cache
+	 * @param key - The key to delete the value for
+	 * @returns {Promise<boolean>} Promise of true if the value was deleted, false otherwise
 	 */
 	delete(key: Key): Promise<boolean>;
 	/**
-	 * Check if a key exists in the cache
+	 * Checks if a key exists in the cache
+	 * @param key - The key to check for
+	 * @returns {Promise<boolean>} Promise of true if the key exists in the cache, false otherwise
 	 */
 	has(key: Key): Promise<boolean>;
+	/**
+	 * Get key expiration Date object or undefined if not found in cache
+	 * @param key - The key to get the expiration for
+	 * @returns {Promise<Date | undefined>} Promise of Date object or undefined if not found in cache
+	 */
+	expires(key: Key): Promise<Date | undefined>;
 	/**
 	 * Clear all cached values
 	 */
 	clear(): Promise<void>;
 	/**
-	 * Get the number of items in the cache
+	 * Gets the number of items in the cache
+	 * @returns {Promise<number>} Promise of the number of items in the cache
 	 */
 	size(): Promise<number>;
 }
