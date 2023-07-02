@@ -38,20 +38,16 @@ jobs:
           echo "NPM_VERSION=$(curl -s https://registry.npmjs.org/${{ env.PACKAGE_NAME }} | jq -r '."dist-tags".latest')" >> $GITHUB_ENV
 
       # code coverage part
-      - run: npm run coverage
+      - name: Test & publish code coverage
         if: |
           github.ref == 'refs/heads/main' &&
           env.CC_TEST_REPORTER_ID != '' &&
           env.HAVE_COVERAGE_SCRIPT == 'true'
-
-      - name: Push coverage to Code Climate Test Reporter
-        if: |
-          github.ref == 'refs/heads/main' &&
-          env.CC_TEST_REPORTER_ID != '' &&
-          env.HAVE_COVERAGE_SCRIPT == 'true'
-        uses: aktions/codeclimate-test-reporter@v1
+        uses: paambaati/codeclimate-action@v4.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ env.CC_TEST_REPORTER_ID }}
         with:
-          codeclimate-test-reporter-id: ${{ env.CC_TEST_REPORTER_ID }}
+          coverageCommand: npm run coverage
 
       # npm publish
       - name: Publish ${{env.PACKAGE_NAME}} ${{env.PACKAGE_VERSION}}
