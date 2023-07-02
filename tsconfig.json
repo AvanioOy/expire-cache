@@ -6,7 +6,7 @@
             "dom.iterable"
         ],
         "module": "commonjs",
-        "target": "es2015",
+        "target": "es2017",
         "rootDir": "./src",
         "outDir": "./dist",
         "moduleResolution": "node",

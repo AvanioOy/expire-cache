@@ -5,4 +5,5 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-      - dependency-name: "@types/node"
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
