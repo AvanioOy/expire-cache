@@ -8,7 +8,8 @@
 
 Typescript/Javascript cache interfaces and expiration cache class.
 
-This package contains: 
+This package contains:
+
 - **_[ICache](./src/interfaces/ICache.ts)_** a common cache interface
 - **_[IAsyncCache](./src/interfaces/IAsyncCache.ts)_** a common async cache interface
 - **_[ICacheOrAsync](./src/interfaces/ICacheOrAsync.ts)_** a type for both cache interfaces
@@ -22,6 +23,11 @@ This package contains:
 import {ICache, ExpireCache} from '@avanio/expire-cache';
 
 const cache = new ExpireCache<string>();
+cache.onClear((cleared) => {
+	for (const [key, value] of cleared.entries()) {
+		console.log(`key ${key} expired, deleted or clear with value ${value}`);
+	}
+});
 
 cache.add('key', 'value', new Date(Date.now() + 1000)); // expires in 1000ms
 cache.add('key2', 'value2'); // never expires (if no default expiration is set)

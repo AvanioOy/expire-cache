@@ -7,6 +7,8 @@ import {ILoggerLike, LogLevel} from '@avanio/logger-like';
 
 const expect = chai.expect;
 
+const onClearSpy = sinon.spy();
+
 const traceSpy = sinon.spy();
 const infoSpy = sinon.spy();
 const warnSpy = sinon.spy();
@@ -29,6 +31,7 @@ const logLevelMap: ExpireCacheLogMapType = {
 	get: LogLevel.Trace,
 	set: LogLevel.Trace,
 	has: LogLevel.Trace,
+	onExpire: LogLevel.None,
 	expires: LogLevel.Trace,
 	size: LogLevel.Trace,
 };
@@ -43,6 +46,7 @@ describe('Expire Cache', () => {
 		errorSpy.resetHistory();
 		debugSpy.resetHistory();
 		cache = new ExpireCache<string>(spyLogger, logLevelMap);
+		cache.onClear(onClearSpy);
 	});
 	it('should return undefined value if not cached yet', async () => {
 		expect(cache.get('key')).to.be.undefined;
@@ -85,6 +89,7 @@ describe('Expire Cache', () => {
 		expect(traceSpy.getCall(3).firstArg).to.be.equal('ExpireCache get key: key');
 		expect(traceSpy.getCall(4).firstArg).to.be.equal('ExpireCache expired count: 1');
 		expect(traceSpy.getCall(5).firstArg).to.be.equal('ExpireCache size: 0');
+		expect(onClearSpy.getCall(0).args[0]).to.be.eql(new Map([['key', 'value']])); // onExpire called
 	});
 	it('should return undefined value if deleted', async () => {
 		cache.set('key', 'value');

@@ -1,4 +1,9 @@
 /**
+ * Callback type for when entries are expired or cleared
+ */
+export type ICacheOnClearCallback<Payload, Key = string> = (entries: Map<Key, Payload>) => void;
+
+/**
  * Synchronous cache interface
  * @example
  * function foo(cache: ICache<string>) {
@@ -51,4 +56,9 @@ export interface ICache<Payload, Key = string> {
 	 * @returns {number} The number of items in the cache
 	 */
 	size(): number;
+
+	/**
+	 * Called when a entries are expired, deleted or cleared
+	 */
+	onClear(callback: ICacheOnClearCallback<Payload, Key>): void;
 }

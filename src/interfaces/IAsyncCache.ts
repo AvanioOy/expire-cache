@@ -1,4 +1,9 @@
 /**
+ * Async callback type for when entries are expired or cleared
+ */
+export type IAsyncCacheOnClearCallback<Payload, Key = string> = (entries: Map<Key, Payload>) => Promise<void>;
+
+/**
  * Asynchronous cache interface
  * @example
  * function foo(cache: IAsyncCache<string>) {
@@ -52,4 +57,9 @@ export interface IAsyncCache<Payload, Key = string> {
 	 * @returns {Promise<number>} Promise of the number of items in the cache
 	 */
 	size(): Promise<number>;
+
+	/**
+	 * Called when a entries are expired, deleted or cleared
+	 */
+	onClear(callback: IAsyncCacheOnClearCallback<Payload, Key>): void;
 }
