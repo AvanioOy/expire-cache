@@ -3,12 +3,12 @@ import 'mocha';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {ICacheOrAsync} from '../src/';
+import {iterAsArray} from './lib/iter';
 import {TestAsync} from './mockup/TestAsync';
 
 chai.use(chaiAsPromised);
 
 const expect = chai.expect;
-
 let cache: ICacheOrAsync<string>;
 
 describe('TestAsync cache', () => {
@@ -21,6 +21,9 @@ describe('TestAsync cache', () => {
 	it('should return cached value', async () => {
 		cache.set('key', 'value');
 		await expect(cache.get('key')).to.eventually.be.equal('value');
+		expect(Array.from(await iterAsArray(cache.entries()))).to.be.eql([['key', 'value']]);
+		expect(Array.from(await iterAsArray(cache.keys()))).to.be.eql(['key']);
+		expect(Array.from(await iterAsArray(cache.values()))).to.be.eql(['value']);
 	});
 	it('should check that key exists', async () => {
 		await expect(cache.has('key')).to.eventually.be.equal(true);

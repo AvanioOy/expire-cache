@@ -62,4 +62,31 @@ export interface IAsyncCache<Payload, Key = string> {
 	 * Called when a entries are expired, deleted or cleared
 	 */
 	onClear(callback: IAsyncCacheOnClearCallback<Payload, Key>): void;
+
+	/**
+	 * Returns an async iterator of key, value pairs for every entry in the cache.
+	 * @example
+	 * for await (const [key, value] of cache.entries()) {
+	 *   console.log(key, value);
+	 * }
+	 */
+	entries(): AsyncIterableIterator<[Key, Payload]>;
+
+	/**
+	 * Async iterator for cache keys
+	 * @example
+	 * for await (const key of cache.keys()) {
+	 *   console.log(key);
+	 * }
+	 */
+	keys(): AsyncIterableIterator<Key>;
+
+	/**
+	 * Async iterator for cache values
+	 * @example
+	 * for await (const value of cache.values()) {
+	 *   console.log(value);
+	 * }
+	 */
+	values(): AsyncIterableIterator<Payload>;
 }

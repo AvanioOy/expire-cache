@@ -61,4 +61,31 @@ export interface ICache<Payload, Key = string> {
 	 * Called when a entries are expired, deleted or cleared
 	 */
 	onClear(callback: ICacheOnClearCallback<Payload, Key>): void;
+
+	/**
+	 * Returns an iterator of key, value pairs for every entry in the cache.
+	 * @example
+	 * for(const [key, value] of cache.entries()) {
+	 *   console.log(key, value);
+	 * }
+	 */
+	entries(): IterableIterator<[Key, Payload]>;
+
+	/**
+	 * Returns an iterator of keys in the cache.
+	 * @example
+	 * for(const key of cache.keys()) {
+	 *   console.log(key);
+	 * }
+	 */
+	keys(): IterableIterator<Key>;
+
+	/**
+	 * Returns an iterator of values in the cache.
+	 * @example
+	 * for(const value of cache.values()) {
+	 *   console.log(value);
+	 * }
+	 */
+	values(): IterableIterator<Payload>;
 }

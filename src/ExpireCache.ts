@@ -104,6 +104,18 @@ export class ExpireCache<Payload, Key = string> extends MapLogger<ExpireCacheLog
 		this.handleOnClear.add(callback);
 	}
 
+	public entries(): IterableIterator<[Key, Payload]> {
+		return this.cacheAsKeyPayloadMap().entries();
+	}
+
+	public keys(): IterableIterator<Key> {
+		return this.cacheAsKeyPayloadMap().keys();
+	}
+
+	public values(): IterableIterator<Payload> {
+		return this.cacheAsKeyPayloadMap().values();
+	}
+
 	/**
 	 * Cleans expired cache entries
 	 */

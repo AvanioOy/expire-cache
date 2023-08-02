@@ -2,6 +2,32 @@ import {IAsyncCache, IAsyncCacheOnClearCallback} from '../../src';
 
 type CacheType<Payload> = {data: Payload; expires: number | undefined};
 
+function makeAsyncIterable<T>(iterable: IterableIterator<T>): AsyncIterableIterator<T> {
+	const asyncIterator = {
+		[Symbol.asyncIterator]() {
+			return {
+				next() {
+					return Promise.resolve(iterable.next());
+				},
+				return() {
+					if (typeof iterable.return === 'function') {
+						return Promise.resolve(iterable.return());
+					}
+					return Promise.resolve({done: true, value: undefined});
+				},
+				throw(error: unknown) {
+					if (typeof iterable.throw === 'function') {
+						return Promise.resolve(iterable.throw(error));
+					}
+					return Promise.reject(error);
+				},
+			};
+		},
+	};
+
+	return asyncIterator as AsyncIterableIterator<T>;
+}
+
 export class TestAsync<Payload, Key = string> implements IAsyncCache<Payload, Key> {
 	private cache = new Map<Key, CacheType<Payload>>();
 	private handleOnClear = new Set<IAsyncCacheOnClearCallback<Payload, Key>>();
@@ -46,6 +72,18 @@ export class TestAsync<Payload, Key = string> implements IAsyncCache<Payload, Ke
 
 	public onClear(callback: (entries: Map<Key, Payload>) => Promise<void>): void {
 		this.handleOnClear.add(callback);
+	}
+
+	public entries(): AsyncIterableIterator<[Key, Payload]> {
+		return makeAsyncIterable(this.cacheAsKeyPayloadMap().entries());
+	}
+
+	public keys(): AsyncIterableIterator<Key> {
+		return makeAsyncIterable(this.cacheAsKeyPayloadMap().keys());
+	}
+
+	public values(): AsyncIterableIterator<Payload> {
+		return makeAsyncIterable(this.cacheAsKeyPayloadMap().values());
 	}
 
 	private async cleanExpired(): Promise<void> {

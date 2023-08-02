@@ -4,6 +4,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import {ExpireCacheLogMapType, ExpireTimeoutCache} from '../src';
 import {ILoggerLike, LogLevel} from '@avanio/logger-like';
+import {iterAsArray} from './lib/iter';
 
 const expect = chai.expect;
 
@@ -67,6 +68,9 @@ describe('Expire Timeout Cache', () => {
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireTimeoutCache size: 1');
 		expect(traceSpy.getCall(3).firstArg).to.be.equal('ExpireTimeoutCache get key: key');
 		expect(traceSpy.getCall(4).firstArg).to.be.equal('ExpireTimeoutCache has key: key');
+		expect(await iterAsArray(cache.entries())).to.be.eql([['key', 'value']]);
+		expect(await iterAsArray(cache.keys())).to.be.eql(['key']);
+		expect(await iterAsArray(cache.values())).to.be.eql(['value']);
 	});
 	it('should return cached value', async () => {
 		const expires = new Date(Date.now() + 1000);
