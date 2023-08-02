@@ -20,9 +20,11 @@ This package contains:
 ### Synchronous example:
 
 ```typescript
-import {ICache, ExpireCache} from '@avanio/expire-cache';
+import {ICache, ExpireCache, ExpireTimeoutCache} from '@avanio/expire-cache';
 
-const cache = new ExpireCache<string>();
+const cache = new ExpireCache<string>(); // expiration on read operations
+const cache = new ExpireTimeoutCache<string>(); // expiration with setTimeout
+
 cache.onClear((cleared) => {
 	for (const [key, value] of cleared.entries()) {
 		console.log(`key ${key} expired, deleted or clear with value ${value}`);
