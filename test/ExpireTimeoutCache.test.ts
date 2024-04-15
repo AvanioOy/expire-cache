@@ -48,6 +48,7 @@ describe('Expire Timeout Cache', () => {
 		debugSpy.resetHistory();
 		cache = new ExpireTimeoutCache<string>(spyLogger, logLevelMap);
 		cache.onClear(onClearSpy);
+		cache.setExpireMs(undefined);
 	});
 	it('should return undefined value if not cached yet', async () => {
 		expect(cache.get('key')).to.be.undefined;

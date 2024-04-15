@@ -118,6 +118,10 @@ export class ExpireTimeoutCache<Payload, Key = string> extends MapLogger<ExpireC
 		return this.cacheAsKeyPayloadMap().values();
 	}
 
+	public setExpireMs(expireMs: number | undefined) {
+		this.defaultExpireMs = expireMs;
+	}
+
 	private clearTimeout(key: Key) {
 		const entry = this.cache.get(key);
 		if (entry?.timeout) {

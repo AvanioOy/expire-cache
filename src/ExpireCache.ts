@@ -116,6 +116,10 @@ export class ExpireCache<Payload, Key = string> extends MapLogger<ExpireCacheLog
 		return this.cacheAsKeyPayloadMap().values();
 	}
 
+	public setExpireMs(expireMs: number | undefined) {
+		this.defaultExpireMs = expireMs;
+	}
+
 	/**
 	 * Cleans expired cache entries
 	 */
