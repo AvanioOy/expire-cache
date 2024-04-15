@@ -1,6 +1,6 @@
 {
   "name": "@avanio/expire-cache",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Typescript/Javascript cache with expiration",
   "main": "./dist/index.js",
   "scripts": {
