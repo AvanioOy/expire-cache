@@ -1,40 +1,30 @@
 {
-    "compilerOptions": {
-        "lib": [
-            "es2021",
-            "dom",
-            "dom.iterable"
-        ],
-        "module": "commonjs",
-        "target": "es2017",
-        "rootDir": "./src",
-        "outDir": "./dist",
-        "moduleResolution": "node",
-        "sourceRoot": "./src",
-        "types": [
-            "node",
-        ],
-        "declaration": true,
-        "removeComments": false,
-        "inlineSources": false,
-        "inlineSourceMap": true,
-        "forceConsistentCasingInFileNames": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "noImplicitAny": true,
-        "importHelpers": false,
-        "strictNullChecks": true,
-        "noUnusedLocals": true,
-        "strict": true,
-        "esModuleInterop": true
-    },
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts",
-        "test",
-        "dist"
-    ]
+	"compilerOptions": {
+		"module": "NodeNext",
+		"lib": ["es2021", "dom", "dom.iterable"],
+		"target": "es2017",
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"moduleResolution": "NodeNext",
+		"sourceRoot": "./src",
+		"types": ["node"],
+		"declaration": true,
+		"removeComments": false,
+		"inlineSources": false,
+		"inlineSourceMap": true,
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noImplicitAny": true,
+		"importHelpers": false,
+		"strictNullChecks": true,
+		"noUnusedLocals": true,
+		"strict": true,
+		"esModuleInterop": true
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "**/*.spec.ts", "test", "dist"],
+	"ts-node": {
+		"esm": true
+	}
 }

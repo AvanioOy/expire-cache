@@ -2,9 +2,9 @@
 import 'mocha';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import {ExpireCacheLogMapType, ExpireTimeoutCache} from '../src';
-import {ILoggerLike, LogLevel} from '@avanio/logger-like';
-import {iterAsArray} from './lib/iter';
+import {type ExpireCacheLogMapType, ExpireTimeoutCache} from '../src/index.js';
+import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
+import {iterAsArray} from './lib/iter.js';
 
 const expect = chai.expect;
 
@@ -39,8 +39,8 @@ const logLevelMap: ExpireCacheLogMapType = {
 
 let cache: ExpireTimeoutCache<string>;
 
-describe('Expire Timeout Cache', () => {
-	beforeEach(() => {
+describe('Expire Timeout Cache', function () {
+	beforeEach(function () {
 		traceSpy.resetHistory();
 		infoSpy.resetHistory();
 		warnSpy.resetHistory();
@@ -50,7 +50,7 @@ describe('Expire Timeout Cache', () => {
 		cache.onClear(onClearSpy);
 		cache.setExpireMs(undefined);
 	});
-	it('should return undefined value if not cached yet', async () => {
+	it('should return undefined value if not cached yet', function () {
 		expect(cache.get('key')).to.be.undefined;
 		expect(cache.size()).to.be.equal(0);
 		expect(traceSpy.callCount).to.be.equal(3);
@@ -58,7 +58,7 @@ describe('Expire Timeout Cache', () => {
 		expect(traceSpy.getCall(1).firstArg).to.be.equal('ExpireTimeoutCache get key: key');
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireTimeoutCache size: 0');
 	});
-	it('should return cached value', async () => {
+	it('should return cached value', async function () {
 		cache.set('key', 'value');
 		expect(cache.size()).to.be.equal(1);
 		expect(cache.get('key')).to.equal('value');
@@ -73,7 +73,7 @@ describe('Expire Timeout Cache', () => {
 		expect(await iterAsArray(cache.keys())).to.be.eql(['key']);
 		expect(await iterAsArray(cache.values())).to.be.eql(['value']);
 	});
-	it('should return cached value', async () => {
+	it('should return cached value', function () {
 		const expires = new Date(Date.now() + 1000);
 		cache.set('key', 'value', expires);
 		expect(cache.expires('key')?.getTime()).to.be.equal(expires.getTime());
@@ -81,7 +81,7 @@ describe('Expire Timeout Cache', () => {
 		expect(traceSpy.getCall(1).firstArg).to.be.equal(`ExpireTimeoutCache set key: key, expireTs: 1000 ms`);
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireTimeoutCache get expire for key: key');
 	});
-	it('should return undefined value if expired', async () => {
+	it('should return undefined value if expired', async function () {
 		cache.set('key', 'value', new Date(Date.now() + 5)); // epires in 1ms
 		await new Promise((resolve) => setTimeout(resolve, 10));
 		expect(cache.size()).to.be.equal(0); // expired
@@ -96,7 +96,7 @@ describe('Expire Timeout Cache', () => {
 		expect(traceSpy.getCall(5).firstArg).to.be.equal('ExpireTimeoutCache size: 0');
 		expect(onClearSpy.getCall(0).args[0]).to.be.eql(new Map([['key', 'value']])); // onExpire called
 	});
-	it('should return undefined value if deleted', async () => {
+	it('should return undefined value if deleted', function () {
 		cache.set('key', 'value');
 		cache.delete('key');
 		expect(traceSpy.callCount).to.be.equal(3);
@@ -105,7 +105,7 @@ describe('Expire Timeout Cache', () => {
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireTimeoutCache delete key: key');
 		expect(cache.get('key')).to.be.undefined;
 	});
-	it('should return undefined value if cleared', async () => {
+	it('should return undefined value if cleared', function () {
 		cache.set('key', 'value');
 		cache.clear();
 		expect(traceSpy.callCount).to.be.equal(3);
@@ -114,7 +114,7 @@ describe('Expire Timeout Cache', () => {
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireTimeoutCache clear');
 		expect(cache.get('key')).to.be.undefined;
 	});
-	it('should have default expiration time', async () => {
+	it('should have default expiration time', async function () {
 		cache = new ExpireTimeoutCache<string>(spyLogger, undefined, 100);
 		cache.set('key', 'value');
 		expect(cache.get('key')).to.equal('value');

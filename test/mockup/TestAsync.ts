@@ -1,4 +1,4 @@
-import {IAsyncCache, IAsyncCacheOnClearCallback} from '../../src';
+import {type IAsyncCache, type IAsyncCacheOnClearCallback} from '../../src/index.js';
 
 type CacheType<Payload> = {data: Payload; expires: number | undefined};
 
@@ -19,7 +19,7 @@ function makeAsyncIterable<T>(iterable: IterableIterator<T>): AsyncIterableItera
 					if (typeof iterable.throw === 'function') {
 						return Promise.resolve(iterable.throw(error));
 					}
-					return Promise.reject(error);
+					return Promise.reject(error as Error);
 				},
 			};
 		},

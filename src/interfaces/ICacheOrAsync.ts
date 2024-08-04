@@ -1,5 +1,5 @@
-import {IAsyncCache} from './IAsyncCache';
-import {ICache} from './ICache';
+import {type IAsyncCache} from './IAsyncCache.js';
+import {type ICache} from './ICache.js';
 
 /**
  * A type that represents both synchronous and asynchronous cache interfaces.

@@ -27,7 +27,7 @@ const cache = new ExpireTimeoutCache<string>(); // expiration with setTimeout
 
 cache.onClear((cleared) => {
 	for (const [key, value] of cleared.entries()) {
-		console.log(`key ${key} expired, deleted or clear with value ${value}`);
+		console.log(`key ${String(key)} expired, deleted or clear with value ${value}`);
 	}
 });
 
