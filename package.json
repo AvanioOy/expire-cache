@@ -8,9 +8,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.js"
     }
   },
   "scripts": {
@@ -64,14 +64,14 @@
   },
   "homepage": "https://github.com/AvanioOy/expire-cache#readme",
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^2.6.1",
-    "@types/chai": "^4.3.17",
-    "@types/chai-as-promised": "^7.1.8",
+    "@stylistic/eslint-plugin": "^2.7.1",
+    "@types/chai": "^4.3.19",
+    "@types/chai-as-promised": "^8.0.0",
     "@types/mocha": "^10.0.7",
-    "@types/node": "^18.19.43",
+    "@types/node": "^20.16.2",
     "@types/sinon": "^17.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
     "c8": "^10.1.2",
     "chai": "^5.1.1",
     "chai-as-promised": "^8.0.0",
@@ -81,7 +81,7 @@
     "eslint-plugin-deprecation": "^3.0.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-sonarjs": "^0.23.0",
-    "mocha": "^10.7.0",
+    "mocha": "^10.7.3",
     "prettier": "^3.3.3",
     "sinon": "^18.0.0",
     "ts-node": "^10.9.2",

@@ -29,7 +29,7 @@ jobs:
           version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Read package information
@@ -68,7 +68,7 @@ jobs:
           github.ref == 'refs/heads/main' &&
           env.CC_TEST_REPORTER_ID != '' &&
           env.HAVE_COVERAGE_SCRIPT == 'true'
-        uses: paambaati/codeclimate-action@v5.0.0
+        uses: paambaati/codeclimate-action@v9.0.0
         env:
           CC_TEST_REPORTER_ID: ${{ env.CC_TEST_REPORTER_ID }}
         with:
