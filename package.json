@@ -65,6 +65,7 @@
   "homepage": "https://github.com/AvanioOy/expire-cache#readme",
   "devDependencies": {
     "@stylistic/eslint-plugin": "^2.7.1",
+    "@stylistic/eslint-plugin-ts": "^2.7.1",
     "@types/chai": "^4.3.19",
     "@types/chai-as-promised": "^8.0.0",
     "@types/mocha": "^10.0.7",
