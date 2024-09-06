@@ -64,15 +64,16 @@
   },
   "homepage": "https://github.com/AvanioOy/expire-cache#readme",
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^2.7.1",
-    "@stylistic/eslint-plugin-ts": "^2.7.1",
+    "@luolapeikko/cache-types": "^0.0.1",
+    "@stylistic/eslint-plugin": "^2.7.2",
+    "@stylistic/eslint-plugin-ts": "^2.7.2",
     "@types/chai": "^4.3.19",
     "@types/chai-as-promised": "^8.0.0",
     "@types/mocha": "^10.0.7",
-    "@types/node": "^20.16.2",
+    "@types/node": "^20.16.5",
     "@types/sinon": "^17.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.3.0",
-    "@typescript-eslint/parser": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.4.0",
+    "@typescript-eslint/parser": "^8.4.0",
     "c8": "^10.1.2",
     "chai": "^5.1.1",
     "chai-as-promised": "^8.0.0",
@@ -91,5 +92,8 @@
   },
   "dependencies": {
     "@avanio/logger-like": "^0.2.0"
+  },
+  "peerDependencies": {
+    "@luolapeikko/cache-types": "^0.0.1"
   }
 }

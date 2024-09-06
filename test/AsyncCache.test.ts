@@ -2,14 +2,14 @@
 import 'mocha';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {type ICacheOrAsync} from '../src/index.js';
+import {type IAsyncCache} from '@luolapeikko/cache-types';
 import {iterAsArray} from './lib/iter.js';
 import {TestAsync} from './mockup/TestAsync.js';
 
 chai.use(chaiAsPromised);
 
 const expect = chai.expect;
-let cache: ICacheOrAsync<string>;
+let cache: IAsyncCache<string>;
 
 describe('TestAsync cache', () => {
 	before(function () {

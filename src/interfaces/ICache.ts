@@ -5,6 +5,7 @@ export type ICacheOnClearCallback<Payload, Key = string> = (entries: Map<Key, Pa
 
 /**
  * Synchronous cache interface
+ * @deprecated Use ```import {type ICache} from '@luolapeikko/cache-types';``` instead.
  * @example
  * function foo(cache: ICache<string>) {
  *   const value = cache.get('key');

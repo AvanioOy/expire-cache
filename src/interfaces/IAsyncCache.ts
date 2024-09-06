@@ -5,6 +5,7 @@ export type IAsyncCacheOnClearCallback<Payload, Key = string> = (entries: Map<Ke
 
 /**
  * Asynchronous cache interface
+ * @deprecated Use ```import {type IAsyncCache} from '@luolapeikko/cache-types';``` instead.
  * @example
  * function foo(cache: IAsyncCache<string>) {
  *   const value = await cache.get('key');

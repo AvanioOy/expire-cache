@@ -1,9 +1,11 @@
+/* eslint-disable deprecation/deprecation */
 import {type IAsyncCache} from './IAsyncCache.js';
 import {type ICache} from './ICache.js';
 
 /**
  * A type that represents both synchronous and asynchronous cache interfaces.
  * This type can be used to create functions that work with both types of cache interfaces.
+ * @deprecated Use ```import {type IAsyncCache} from '@luolapeikko/cache-types';``` instead.
  * @example
  * function foo(cache: ICacheOrAsync<string>) {
  *   const value = await cache.get('key');
