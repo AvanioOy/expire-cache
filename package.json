@@ -2,22 +2,21 @@
   "name": "@avanio/expire-cache",
   "version": "0.5.0",
   "description": "Typescript/Javascript cache with expiration",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --sourcemap --format cjs,esm --dts --clean",
-    "test": "c8 mocha",
-    "coverage": "c8 report --reporter=lcovonly",
-    "lint": "eslint . --ext .ts",
+    "build": "tsup src/index.mts --sourcemap --format cjs,esm --dts --clean",
+    "test": "vitest test --run --no-isolate --coverage",
+    "coverage": "vitest test --run --no-isolate --reporter=dot --coverage --coverage.reporter=lcov",
+    "lint": "eslint . --ext .mts",
     "validate": "tsc --noEmit --project tsconfig.test.json"
   },
   "files": [
@@ -28,7 +27,7 @@
     "recursive": true,
     "enable-source-maps": true,
     "extension": [
-      "test.ts",
+      "test.mts",
       "cjs",
       "mjs"
     ],
@@ -64,36 +63,33 @@
   },
   "homepage": "https://github.com/AvanioOy/expire-cache#readme",
   "devDependencies": {
-    "@luolapeikko/cache-types": "^0.0.1",
-    "@stylistic/eslint-plugin": "^2.7.2",
-    "@stylistic/eslint-plugin-ts": "^2.7.2",
-    "@types/chai": "^4.3.19",
-    "@types/chai-as-promised": "^8.0.0",
-    "@types/mocha": "^10.0.7",
-    "@types/node": "^20.16.5",
+    "@avanio/logger-like": "^0.2.5",
+    "@luolapeikko/cache-types": "^0.0.6",
+    "@stylistic/eslint-plugin": "^2.9.0",
+    "@stylistic/eslint-plugin-ts": "^2.9.0",
+    "@types/node": "^20.16.11",
     "@types/sinon": "^17.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.4.0",
-    "@typescript-eslint/parser": "^8.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@typescript-eslint/parser": "^8.8.1",
+    "@vitest/coverage-v8": "^2.1.2",
+    "@vitest/ui": "^2.1.2",
     "c8": "^10.1.2",
-    "chai": "^5.1.1",
-    "chai-as-promised": "^8.0.0",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-deprecation": "^3.0.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-sonarjs": "^0.23.0",
-    "mocha": "^10.7.3",
     "prettier": "^3.3.3",
-    "sinon": "^18.0.0",
+    "sinon": "^19.0.2",
     "ts-node": "^10.9.2",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4"
-  },
-  "dependencies": {
-    "@avanio/logger-like": "^0.2.0"
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.2"
   },
   "peerDependencies": {
-    "@luolapeikko/cache-types": "^0.0.1"
+    "@avanio/logger-like": "^0.1 || ^0.2",
+    "@luolapeikko/cache-types": "^0.0"
   }
 }

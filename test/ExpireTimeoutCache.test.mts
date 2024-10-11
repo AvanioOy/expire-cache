@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable sort-keys, no-unused-expressions, @typescript-eslint/no-explicit-any, sonarjs/no-duplicate-string */
-import 'mocha';
-import * as chai from 'chai';
 import * as sinon from 'sinon';
-import {type ExpireCacheLogMapType, ExpireTimeoutCache} from '../src/index.js';
+import {beforeEach, describe, expect, it} from 'vitest';
+import {type ExpireCacheLogMapType, ExpireTimeoutCache} from '../src/index.mjs';
 import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
-import {iterAsArray} from './lib/iter.js';
-
-const expect = chai.expect;
+import {iterAsArray} from './lib/iter.mjs';
 
 const onClearSpy = sinon.spy();
 

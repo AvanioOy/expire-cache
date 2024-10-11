@@ -1,5 +1,5 @@
 require('mocha');
-const {ExpireCache, ExpireTimeoutCache} = require('../dist/index.cjs');
+const {ExpireCache, ExpireTimeoutCache} = require('../dist/index.js');
 
 async function getChaiExpect() {
 	return (await import('chai')).expect;

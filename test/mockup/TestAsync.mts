@@ -1,5 +1,5 @@
 import {type IAsyncCache} from '@luolapeikko/cache-types';
-import {type IAsyncCacheOnClearCallback} from '../../src/index.js';
+import {type IAsyncCacheOnClearCallback} from '../../src/index.mjs';
 
 type CacheType<Payload> = {data: Payload; expires: number | undefined};
 

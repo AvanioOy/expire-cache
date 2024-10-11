@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/await-thenable */
 /**
  * unwrap an iterator and async iterator into an array
  */

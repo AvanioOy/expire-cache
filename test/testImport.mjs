@@ -1,6 +1,6 @@
 import 'mocha';
 import {expect} from 'chai';
-import {ExpireCache, ExpireTimeoutCache} from '../dist/index.js';
+import {ExpireCache, ExpireTimeoutCache} from '../dist/index.mjs';
 
 describe('MJS import loading', function () {
 	it('should have the ExpireCache class', function () {

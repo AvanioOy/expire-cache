@@ -1,6 +1,6 @@
 import {type ILoggerLike, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
 import {type ICache} from '@luolapeikko/cache-types';
-import {type ICacheOnClearCallback} from './interfaces/ICache.js';
+import {type ICacheOnClearCallback} from './interfaces/ICache.mjs';
 
 /**
  * The default log mapping for the ExpireCache class.
