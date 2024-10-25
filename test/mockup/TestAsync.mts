@@ -1,7 +1,5 @@
-import {type IAsyncCache} from '@luolapeikko/cache-types';
-import {type IAsyncCacheOnClearCallback} from '../../src/index.mjs';
-
-type CacheType<Payload> = {data: Payload; expires: number | undefined};
+import {type CacheEventsMap, type IAsyncCache} from '@luolapeikko/cache-types';
+import {EventEmitter} from 'events';
 
 function makeAsyncIterable<T>(iterable: IterableIterator<T>): AsyncIterableIterator<T> {
 	const asyncIterator = {
@@ -29,87 +27,101 @@ function makeAsyncIterable<T>(iterable: IterableIterator<T>): AsyncIterableItera
 	return asyncIterator as AsyncIterableIterator<T>;
 }
 
-export class TestAsync<Payload, Key = string> implements IAsyncCache<Payload, Key> {
-	private cache = new Map<Key, CacheType<Payload>>();
-	private handleOnClear = new Set<IAsyncCacheOnClearCallback<Payload, Key>>();
+export class TestAsync<Payload, Key = string> extends EventEmitter<CacheEventsMap<Payload, Key>> implements IAsyncCache<Payload, Key> {
+	private readonly cache = new Map<Key, Payload>();
+	private readonly cacheTtl = new Map<Key, number | undefined>();
+	private defaultExpireMs: undefined | number;
+
+	constructor(defaultExpireMs?: number) {
+		super();
+		this.defaultExpireMs = defaultExpireMs;
+	}
 
 	public set(key: Key, data: Payload, expires?: Date) {
-		this.cache.set(key, {data, expires: expires?.getTime()});
+		const expireTs: number | undefined = this.getExpireDate(expires)?.getTime();
+		this.emit('set', key, data, this.getExpireDate(expires));
+		this.cache.set(key, data);
+		this.cacheTtl.set(key, expireTs);
 		return Promise.resolve();
 	}
 
 	public async get(key: Key) {
-		await this.cleanExpired();
-		return this.cache.get(key)?.data;
+		this.emit('get', key);
+		this.cleanExpired();
+		return Promise.resolve(this.cache.get(key));
 	}
 
-	public async has(key: Key): Promise<boolean> {
-		await this.cleanExpired();
-		return this.cache.has(key);
+	public has(key: Key) {
+		this.cleanExpired();
+		return Promise.resolve(this.cache.has(key));
 	}
 
-	public async expires(key: Key): Promise<Date | undefined> {
-		await this.cleanExpired();
-		const entry = this.cache.get(key);
-		return Promise.resolve(entry?.expires ? new Date(entry.expires) : undefined);
+	public expires(key: Key) {
+		const expires = this.cacheTtl.get(key);
+		this.cleanExpired();
+		return Promise.resolve(expires ? new Date(expires) : undefined);
 	}
 
-	public async delete(key: Key) {
+	public delete(key: Key) {
 		const entry = this.cache.get(key);
 		if (entry) {
-			await this.notifyOnClear(new Map<Key, Payload>([[key, entry.data]]));
+			this.notifyExpires(new Map<Key, Payload>([[key, entry]]));
+			this.emit('delete', key);
 		}
-		return this.cache.delete(key);
+		this.cacheTtl.delete(key);
+		return Promise.resolve(this.cache.delete(key));
 	}
 
-	public async clear() {
-		await this.notifyOnClear(this.cacheAsKeyPayloadMap());
-		return this.cache.clear();
+	public clear() {
+		const copy = new Map<Key, Payload>(this.cache);
+		this.notifyExpires(copy);
+		this.emit('clear', copy);
+		this.cache.clear();
+		this.cacheTtl.clear();
 	}
 
 	public size(): Promise<number> {
 		return Promise.resolve(this.cache.size);
 	}
 
-	public onClear(callback: (entries: Map<Key, Payload>) => Promise<void>): void {
-		this.handleOnClear.add(callback);
-	}
-
 	public entries(): AsyncIterableIterator<[Key, Payload]> {
-		return makeAsyncIterable(this.cacheAsKeyPayloadMap().entries());
+		return makeAsyncIterable(this.cache.entries());
 	}
 
 	public keys(): AsyncIterableIterator<Key> {
-		return makeAsyncIterable(this.cacheAsKeyPayloadMap().keys());
+		return makeAsyncIterable(this.cache.keys());
 	}
 
 	public values(): AsyncIterableIterator<Payload> {
-		return makeAsyncIterable(this.cacheAsKeyPayloadMap().values());
+		return makeAsyncIterable(this.cache.values());
 	}
 
-	private async cleanExpired(): Promise<void> {
+	private cleanExpired() {
 		const now = new Date().getTime();
 		const deleteEntries = new Map<Key, Payload>();
-		for (const [key, value] of this.cache.entries()) {
-			if (value.expires !== undefined && value.expires < now) {
-				deleteEntries.set(key, value.data);
-				this.cache.delete(key);
+		for (const [key, expire] of this.cacheTtl.entries()) {
+			if (expire !== undefined && expire < now) {
+				const value = this.cache.get(key);
+				if (value) {
+					deleteEntries.set(key, value);
+					this.cache.delete(key);
+				}
+				this.cacheTtl.delete(key);
 			}
 		}
 		if (deleteEntries.size > 0) {
-			await this.notifyOnClear(deleteEntries);
+			this.notifyExpires(deleteEntries);
 		}
 	}
 
-	private notifyOnClear(entries: Map<Key, Payload>) {
-		return Promise.all(Array.from(this.handleOnClear).map((callback) => callback(entries)));
+	private notifyExpires(entries: Map<Key, Payload>) {
+		for (const [key, value] of entries.entries()) {
+			this.emit('expires', key, value);
+		}
 	}
 
-	private cacheAsKeyPayloadMap(): Map<Key, Payload> {
-		const map = new Map<Key, Payload>();
-		for (const [key, value] of this.cache.entries()) {
-			map.set(key, value.data);
-		}
-		return map;
+	private getExpireDate(expires: Date | undefined): Date | undefined {
+		const defaultExpireDate: Date | undefined = this.defaultExpireMs ? new Date(Date.now() + this.defaultExpireMs) : undefined;
+		return expires ?? defaultExpireDate;
 	}
 }

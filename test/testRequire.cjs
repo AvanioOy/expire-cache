@@ -1,16 +1,7 @@
-require('mocha');
+import {describe, expect, it} from 'vitest';
 const {ExpireCache, ExpireTimeoutCache} = require('../dist/index.js');
 
-async function getChaiExpect() {
-	return (await import('chai')).expect;
-}
-
-let expect;
-
 describe('CJS require loading', function () {
-	before(async function () {
-		expect = await getChaiExpect();
-	});
 	it('should have the ExpireCache class', function () {
 		expect(ExpireCache).to.be.an('function');
 	});

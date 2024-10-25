@@ -6,7 +6,7 @@ import {ExpireCache, type ExpireCacheLogMapType} from '../src/index.mjs';
 import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
 import {iterAsArray} from './lib/iter.mjs';
 
-const onClearSpy = sinon.spy();
+const onExpiresSpy = sinon.spy();
 
 const traceSpy = sinon.spy();
 const infoSpy = sinon.spy();
@@ -44,8 +44,9 @@ describe('Expire Cache', function () {
 		warnSpy.resetHistory();
 		errorSpy.resetHistory();
 		debugSpy.resetHistory();
+		onExpiresSpy.resetHistory();
 		cache = new ExpireCache<string>(spyLogger, logLevelMap);
-		cache.onClear(onClearSpy);
+		cache.on('expires', onExpiresSpy);
 		cache.setExpireMs(undefined);
 	});
 	it('should return undefined value if not cached yet', function () {
@@ -92,7 +93,7 @@ describe('Expire Cache', function () {
 		expect(traceSpy.getCall(3).firstArg).to.be.equal('ExpireCache get key: key');
 		expect(traceSpy.getCall(4).firstArg).to.be.equal('ExpireCache expired count: 1');
 		expect(traceSpy.getCall(5).firstArg).to.be.equal('ExpireCache size: 0');
-		expect(onClearSpy.getCall(0).args[0]).to.be.eql(new Map([['key', 'value']])); // onExpire called
+		expect(onExpiresSpy.getCall(0).args).to.be.eql(['key', 'value']); // onExpire called
 	});
 	it('should return undefined value if deleted', function () {
 		cache.set('key', 'value');

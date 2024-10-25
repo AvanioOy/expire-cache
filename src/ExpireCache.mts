@@ -1,6 +1,6 @@
+import {type CacheEventsMap, type ICache} from '@luolapeikko/cache-types';
 import {type ILoggerLike, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
-import {type ICache} from '@luolapeikko/cache-types';
-import {type ICacheOnClearCallback} from './interfaces/ICache.mjs';
+import {EventEmitter} from 'events';
 
 /**
  * The default log mapping for the ExpireCache class.
@@ -33,10 +33,10 @@ export type ExpireCacheLogMapType = LogMapping<keyof typeof defaultLogMap>;
  * @template Payload - The type of the cached data
  * @template Key - (optional) The type of the cache key (default is string)
  */
-export class ExpireCache<Payload, Key = string> extends MapLogger<ExpireCacheLogMapType> implements ICache<Payload, Key> {
-	private cache = new Map<Key, Payload>();
-	private cacheTtl = new Map<Key, number | undefined>();
-	private handleOnClear = new Set<ICacheOnClearCallback<Payload, Key>>();
+export class ExpireCache<Payload, Key = string> extends EventEmitter<CacheEventsMap<Payload, Key>> implements ICache<Payload, Key> {
+	private readonly cache = new Map<Key, Payload>();
+	private readonly cacheTtl = new Map<Key, number | undefined>();
+	private readonly logger: MapLogger<ExpireCacheLogMapType>;
 	private defaultExpireMs: undefined | number;
 
 	/**
@@ -46,62 +46,63 @@ export class ExpireCache<Payload, Key = string> extends MapLogger<ExpireCacheLog
 	 * @param defaultExpireMs - The default expiration time in milliseconds (optional)
 	 */
 	constructor(logger?: ILoggerLike, logMapping?: Partial<ExpireCacheLogMapType>, defaultExpireMs?: number) {
-		super(logger, Object.assign({}, defaultLogMap, logMapping));
-		this.logKey('constructor', `ExpireCache created, defaultExpireMs: ${String(defaultExpireMs)}`);
+		super();
+		this.logger = new MapLogger<ExpireCacheLogMapType>(logger, Object.assign({}, defaultLogMap, logMapping));
+		this.logger.logKey('constructor', `ExpireCache created, defaultExpireMs: ${String(defaultExpireMs)}`);
 		this.defaultExpireMs = defaultExpireMs;
 	}
 
 	public set(key: Key, data: Payload, expires?: Date) {
-		const expireTs: number | undefined = expires?.getTime() ?? (this.defaultExpireMs && Date.now() + this.defaultExpireMs);
-		this.logKey('set', `ExpireCache set key: ${String(key)}, expireTs: ${String(expireTs)}`);
+		const expireTs: number | undefined = this.getExpireDate(expires)?.getTime();
+		this.logger.logKey('set', `ExpireCache set key: ${String(key)}, expireTs: ${String(expireTs)}`);
+		this.emit('set', key, data, this.getExpireDate(expires));
 		this.cache.set(key, data);
 		this.cacheTtl.set(key, expireTs);
 	}
 
 	public get(key: Key) {
-		this.logKey('get', `ExpireCache get key: ${String(key)}`);
+		this.logger.logKey('get', `ExpireCache get key: ${String(key)}`);
+		this.emit('get', key);
 		this.cleanExpired();
 		return this.cache.get(key);
 	}
 
 	public has(key: Key) {
-		this.logKey('has', `ExpireCache has key: ${String(key)}`);
+		this.logger.logKey('has', `ExpireCache has key: ${String(key)}`);
 		this.cleanExpired();
 		return this.cache.has(key);
 	}
 
 	public expires(key: Key): Date | undefined {
-		this.logKey('expires', `ExpireCache get expire for key: ${String(key)}`);
+		this.logger.logKey('expires', `ExpireCache get expire for key: ${String(key)}`);
 		const expires = this.cacheTtl.get(key);
 		this.cleanExpired();
 		return expires ? new Date(expires) : undefined;
 	}
 
 	public delete(key: Key) {
-		this.logKey('delete', `ExpireCache delete key: ${String(key)}`);
+		this.logger.logKey('delete', `ExpireCache delete key: ${String(key)}`);
 		const entry = this.cache.get(key);
 		if (entry) {
-			this.notifyOnClear(new Map<Key, Payload>([[key, entry]]));
+			this.notifyExpires(new Map<Key, Payload>([[key, entry]]));
+			this.emit('delete', key);
 		}
 		this.cacheTtl.delete(key);
 		return this.cache.delete(key);
 	}
 
 	public clear() {
-		this.logKey('clear', `ExpireCache clear`);
-		this.notifyOnClear(new Map<Key, Payload>(this.cache));
+		this.logger.logKey('clear', `ExpireCache clear`);
+		const copy = new Map<Key, Payload>(this.cache);
+		this.notifyExpires(copy);
+		this.emit('clear', copy);
 		this.cache.clear();
 		this.cacheTtl.clear();
 	}
 
 	public size() {
-		this.logKey('size', `ExpireCache size: ${this.cache.size.toString()}`);
+		this.logger.logKey('size', `ExpireCache size: ${this.cache.size.toString()}`);
 		return this.cache.size;
-	}
-
-	public onClear(callback: ICacheOnClearCallback<Payload, Key>): void {
-		this.logKey('onExpire', `ExpireCache onExpire`);
-		this.handleOnClear.add(callback);
 	}
 
 	public entries(): IterableIterator<[Key, Payload]> {
@@ -144,20 +145,19 @@ export class ExpireCache<Payload, Key = string> extends MapLogger<ExpireCacheLog
 			}
 		}
 		if (deleteEntries.size > 0) {
-			this.notifyOnClear(deleteEntries);
-			this.logKey('cleanExpired', `ExpireCache expired count: ${deleteEntries.size.toString()}`);
+			this.notifyExpires(deleteEntries);
+			this.logger.logKey('cleanExpired', `ExpireCache expired count: ${deleteEntries.size.toString()}`);
 		}
 	}
 
-	private notifyOnClear(entries: Map<Key, Payload>) {
-		this.handleOnClear.forEach((callback) => callback(entries));
+	private notifyExpires(entries: Map<Key, Payload>) {
+		for (const [key, value] of entries.entries()) {
+			this.emit('expires', key, value);
+		}
 	}
 
-	/* 	private cacheAsKeyPayloadMap(): Map<Key, Payload> {
-		const map = new Map<Key, Payload>();
-		for (const [key, value] of this.cache.entries()) {
-			map.set(key, value.data);
-		}
-		return map;
-	} */
+	private getExpireDate(expires: Date | undefined): Date | undefined {
+		const defaultExpireDate: Date | undefined = this.defaultExpireMs ? new Date(Date.now() + this.defaultExpireMs) : undefined;
+		return expires ?? defaultExpireDate;
+	}
 }

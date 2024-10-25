@@ -1,5 +1,4 @@
-import 'mocha';
-import {expect} from 'chai';
+import {describe, expect, it} from 'vitest';
 import {ExpireCache, ExpireTimeoutCache} from '../dist/index.mjs';
 
 describe('MJS import loading', function () {
