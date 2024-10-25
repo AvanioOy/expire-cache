@@ -35,6 +35,10 @@ const defaultLogMap = {
 
 export type TieredCacheLogMapType = LogMapping<keyof typeof defaultLogMap>;
 
+/**
+ * Multi tier cache with timeout support to change tier based on timeout
+ * @since v0.6.0
+ */
 export abstract class TieredCache<Tiers extends TierType<unknown, string>[], TimeoutEnum extends number, Key> extends EventEmitter<
 	MultiTierCacheEvents<Tiers>
 > {

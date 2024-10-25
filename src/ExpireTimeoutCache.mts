@@ -31,6 +31,7 @@ const defaultLogMap = {
  * ExpireCache class that implements the ICache interface with value expiration and expires with setTimeout
  * @template Payload - The type of the cached data
  * @template Key - (optional) The type of the cache key (default is string)
+ * @since v0.6.0
  */
 export class ExpireTimeoutCache<Payload, Key = string> extends EventEmitter<CacheEventsMap<Payload, Key>> implements ICache<Payload, Key> {
 	private readonly cache = new Map<Key, Payload>();
