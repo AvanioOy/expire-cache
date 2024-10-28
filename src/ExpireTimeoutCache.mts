@@ -1,5 +1,5 @@
 import {type CacheEventsMap, type ICache} from '@luolapeikko/cache-types';
-import {type ILoggerLike, LogLevel, MapLogger} from '@avanio/logger-like';
+import {type ILoggerLike, type ISetLogMapping, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
 import {EventEmitter} from 'events';
 import {type ExpireCacheLogMapType} from './ExpireCache.mjs';
 
@@ -27,13 +27,18 @@ const defaultLogMap = {
 	size: LogLevel.None,
 } as const;
 
+export type ExpireTimeoutCacheLogMapType = LogMapping<keyof typeof defaultLogMap>;
+
 /**
  * ExpireCache class that implements the ICache interface with value expiration and expires with setTimeout
  * @template Payload - The type of the cached data
  * @template Key - (optional) The type of the cache key (default is string)
  * @since v0.6.0
  */
-export class ExpireTimeoutCache<Payload, Key = string> extends EventEmitter<CacheEventsMap<Payload, Key>> implements ICache<Payload, Key> {
+export class ExpireTimeoutCache<Payload, Key = string>
+	extends EventEmitter<CacheEventsMap<Payload, Key>>
+	implements ICache<Payload, Key>, ISetLogMapping<ExpireTimeoutCacheLogMapType>
+{
 	private readonly cache = new Map<Key, Payload>();
 	private readonly cacheTimeout = new Map<Key, {timeout: ReturnType<typeof setTimeout> | undefined; expires: Date | undefined}>();
 	private readonly logger: MapLogger<ExpireCacheLogMapType>;
@@ -122,6 +127,14 @@ export class ExpireTimeoutCache<Payload, Key = string> extends EventEmitter<Cach
 	 */
 	public setExpireMs(expireMs: number | undefined) {
 		this.defaultExpireMs = expireMs;
+	}
+
+	public setLogger(logger: ILoggerLike | undefined): void {
+		this.logger.setLogger(logger);
+	}
+
+	public setLogMapping(logMapping: Partial<ExpireCacheLogMapType>): void {
+		this.logger.setLogMapping(logMapping);
 	}
 
 	private clearTimeout(key: Key) {

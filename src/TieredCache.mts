@@ -1,4 +1,4 @@
-import {type ILoggerLike, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
+import {type ILoggerLike, type ISetLogMapping, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
 import {EventEmitter} from 'stream';
 import {type ExpireCacheLogMapType} from './ExpireCache.mjs';
 
@@ -39,9 +39,10 @@ export type TieredCacheLogMapType = LogMapping<keyof typeof defaultLogMap>;
  * Multi tier cache with timeout support to change tier based on timeout
  * @since v0.6.0
  */
-export abstract class TieredCache<Tiers extends TierType<unknown, string>[], TimeoutEnum extends number, Key> extends EventEmitter<
-	MultiTierCacheEvents<Tiers>
-> {
+export abstract class TieredCache<Tiers extends TierType<unknown, string>[], TimeoutEnum extends number, Key>
+	extends EventEmitter<MultiTierCacheEvents<Tiers>>
+	implements ISetLogMapping<TieredCacheLogMapType>
+{
 	public abstract readonly cacheName: string;
 	protected readonly cache = new Map<Key, Tiers[number]>();
 	private readonly cacheTimeout = new Map<Key, ReturnType<typeof setTimeout> | undefined>();
@@ -169,6 +170,14 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 
 	public status(): TieredCacheStatus<Tiers> {
 		return this.buildStatus();
+	}
+
+	public setLogger(logger: ILoggerLike | undefined): void {
+		this.logger.setLogger(logger);
+	}
+
+	public setLogMapping(logMapping: Partial<ExpireCacheLogMapType>): void {
+		this.logger.setLogMapping(logMapping);
 	}
 
 	private setTimeout(key: Key, timeout: number | undefined) {
