@@ -90,7 +90,7 @@
   },
   "peerDependencies": {
     "@avanio/logger-like": "^0.1 || ^0.2",
-    "@luolapeikko/cache-types": "^0.7"
+    "@luolapeikko/cache-types": "^0.0"
   },
   "pnpm": {
     "overrides": {
