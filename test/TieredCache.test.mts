@@ -68,6 +68,7 @@ describe('TieredCache cache', () => {
 		await expect(cache.get('key', 'model')).resolves.toEqual(date);
 		expect(traceSpy.callCount).toEqual(4);
 		expect(statusUpdateSpy.callCount).toEqual(1);
+		expect(cache.deleteKeys(['key'])).toEqual(1);
 	});
 	it('should return cached value and wait timeouts', async function () {
 		const date = new Date();
@@ -80,12 +81,12 @@ describe('TieredCache cache', () => {
 		await sleep(DateTimeout.Model);
 		expect(cache.getTier('key')).toEqual('object');
 		expect(cache.status()).toEqual({size: 1, tiers: {model: 0, object: 1, stringValue: 0}});
-		expect(traceSpy.callCount).toEqual(2);
+		expect(traceSpy.callCount).toEqual(3);
 		traceSpy.resetHistory();
 		await sleep(DateTimeout.Object);
 		expect(cache.getTier('key')).toEqual('stringValue');
 		expect(cache.status()).toEqual({size: 1, tiers: {model: 0, object: 0, stringValue: 1}});
-		expect(traceSpy.callCount).toEqual(2);
+		expect(traceSpy.callCount).toEqual(3);
 		await expect(cache.get('key', 'stringValue')).resolves.toEqual(date.getTime().toString());
 		// should clear cache entry
 		traceSpy.resetHistory();
@@ -98,7 +99,7 @@ describe('TieredCache cache', () => {
 	});
 	it('should test iterators', async function () {
 		const date = new Date();
-		await cache.set('key', 'model', date);
+		await cache.setEntries('model', [['key', date]]);
 		for await (const entry of cache.tierValues('model')) {
 			expect(entry).toEqual(date);
 		}

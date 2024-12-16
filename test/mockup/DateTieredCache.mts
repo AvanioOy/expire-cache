@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import {type GetCacheTier, TieredCache, type TierType} from '../../src/index.mjs';
+import {type GetCacheTier, TieredCache, type TierStatusInitialRecord, type TierType} from '../../src/index.mjs';
 
 type DateCacheTiers = [TierType<Date, 'model'>, TierType<{$cdate: number}, 'object'>, TierType<string, 'stringValue'>];
 type DataCacheTier = DateCacheTiers[number];
@@ -103,16 +103,7 @@ export class DateTieredCache extends TieredCache<DateCacheTiers, DateTimeoutValu
 		}
 	}
 
-	protected buildStatus(): {size: number; tiers: Record<'object' | 'model' | 'stringValue', number>} {
-		return {
-			size: this.cache.size,
-			tiers: Array.from(this.cache.values()).reduce(
-				(acc, {tier: type}) => {
-					acc[type]++;
-					return acc;
-				},
-				{model: 0, object: 0, stringValue: 0},
-			),
-		};
+	protected getInitialStatusData(): Readonly<TierStatusInitialRecord<DateCacheTiers>> {
+		return {model: 0, object: 0, stringValue: 0} as const;
 	}
 }
