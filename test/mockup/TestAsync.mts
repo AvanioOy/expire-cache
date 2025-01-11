@@ -1,5 +1,5 @@
-import {type CacheEventsMap, type IAsyncCache} from '@luolapeikko/cache-types';
 import {EventEmitter} from 'events';
+import {type CacheEventsMap, type IAsyncCache} from '@luolapeikko/cache-types';
 
 function makeAsyncIterable<T>(iterable: IterableIterator<T>): AsyncIterableIterator<T> {
 	const asyncIterator = {

@@ -1,9 +1,3 @@
-/* eslint-disable sonarjs/no-duplicated-branches */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {type GetCacheTier, TieredCache, type TierStatusInitialRecord, type TierType} from '../../src/index.mjs';
 
 type DateCacheTiers = [TierType<Date, 'model'>, TierType<{$cdate: number}, 'object'>, TierType<string, 'stringValue'>];
@@ -75,15 +69,15 @@ export class DateTieredCache extends TieredCache<DateCacheTiers, DateTimeoutValu
 		return this.handleTierDefaultTimeout(tier);
 	}
 
-	protected handleTierTimeout(key: string) {
+	protected async handleTierTimeout(key: string) {
 		const cache = this.cache.get(key);
 		if (cache) {
 			switch (cache.tier) {
 				case 'model':
-					this.handleSetValue(key, 'object', {$cdate: cache.data.getTime()});
+					await this.handleSetValue(key, 'object', {$cdate: cache.data.getTime()});
 					return this.handleTierDefaultTimeout('object');
 				case 'object':
-					this.handleSetValue(key, 'stringValue', new Date(cache.data.$cdate).getTime().toString());
+					await this.handleSetValue(key, 'stringValue', new Date(cache.data.$cdate).getTime().toString());
 					return this.handleTierDefaultTimeout('stringValue');
 				case 'stringValue':
 					this.cache.delete(key);

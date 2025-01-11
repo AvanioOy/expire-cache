@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable sort-keys, no-unused-expressions, @typescript-eslint/no-explicit-any, sonarjs/no-duplicate-string */
+import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
 import * as sinon from 'sinon';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {type ExpireCacheLogMapType, ExpireTimeoutCache} from '../src/index.mjs';
-import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
 import {iterAsArray} from './lib/iter.mjs';
 
 const onExpiresSpy = sinon.spy();

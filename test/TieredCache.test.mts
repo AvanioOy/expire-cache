@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable sort-keys */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
 import * as sinon from 'sinon';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
-import {DateTieredCache, DateTimeout} from './mockup/DateTieredCache.mjs';
-import {type ILoggerLike, LogLevel} from '@avanio/logger-like';
 import {type TieredCacheLogMapType} from '../src/index.mjs';
+import {DateTieredCache, DateTimeout} from './mockup/DateTieredCache.mjs';
 
 const traceSpy = sinon.spy();
 const infoSpy = sinon.spy();

@@ -1,5 +1,5 @@
-import {type ILoggerLike, type ISetLogMapping, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
 import {EventEmitter} from 'events';
+import {type ILoggerLike, type ISetLogMapping, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
 import {type ExpireCacheLogMapType} from './ExpireCache.mjs';
 
 export type TierType<Data, Tier extends string> = {tier: Tier; data: Data};

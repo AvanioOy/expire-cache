@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {beforeAll, describe, expect, it} from 'vitest';
 import {type IAsyncCache} from '@luolapeikko/cache-types';
+import {beforeAll, describe, expect, it} from 'vitest';
 import {iterAsArray} from './lib/iter.mjs';
 import {TestAsync} from './mockup/TestAsync.mjs';
 

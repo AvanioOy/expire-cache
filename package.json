@@ -63,34 +63,36 @@
   },
   "homepage": "https://github.com/AvanioOy/expire-cache#readme",
   "devDependencies": {
-    "@avanio/logger-like": "^0.2.7",
-    "@luolapeikko/cache-types": "^0.0.7",
+    "@avanio/logger-like": "^0.2.9",
+    "@luolapeikko/cache-types": "^0.0.8",
     "@stylistic/eslint-plugin": "^2.12.1",
     "@stylistic/eslint-plugin-ts": "^2.12.1",
-    "@types/node": "^20.17.10",
+    "@types/node": "^22.10.5",
     "@types/sinon": "^17.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.18.0",
-    "@typescript-eslint/parser": "^8.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
     "@vitest/coverage-v8": "^2.1.8",
     "@vitest/ui": "^2.1.8",
     "c8": "^10.1.3",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
+    "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-deprecation": "^3.0.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-sonarjs": "^0.23.0",
     "prettier": "^3.4.2",
     "sinon": "^19.0.2",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.5",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.3",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
     "vitest": "^2.1.8"
   },
   "peerDependencies": {
-    "@avanio/logger-like": "^0.2.7",
-    "@luolapeikko/cache-types": "^0.0"
+    "@avanio/logger-like": "^0.2.6",
+    "@luolapeikko/cache-types": "^0.0.8"
   },
-  "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c"
+  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a"
 }
