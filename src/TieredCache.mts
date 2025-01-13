@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import {type ILoggerLike, type ISetLogMapping, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
+import {type ILoggerLike, LogLevel, type LogMapInfer, MapLogger} from '@avanio/logger-like';
 import {type ExpireCacheLogMapType} from './ExpireCache.mjs';
 
 export type TierType<Data, Tier extends string> = {tier: Tier; data: Data};
@@ -40,20 +40,19 @@ const defaultLogMap = {
 	size: LogLevel.None,
 } as const;
 
-export type TieredCacheLogMapType = LogMapping<keyof typeof defaultLogMap>;
+export type TieredCacheLogMapType = LogMapInfer<typeof defaultLogMap>;
 
 /**
  * Multi tier cache with timeout support to change tier based on timeout
  * @since v0.6.0
  */
-export abstract class TieredCache<Tiers extends TierType<unknown, string>[], TimeoutEnum extends number, Key>
-	extends EventEmitter<MultiTierCacheEvents<Tiers, Key>>
-	implements ISetLogMapping<TieredCacheLogMapType>
-{
+export abstract class TieredCache<Tiers extends TierType<unknown, string>[], TimeoutEnum extends number, Key> extends EventEmitter<
+	MultiTierCacheEvents<Tiers, Key>
+> {
 	public abstract readonly cacheName: string;
 	protected readonly cache = new Map<Key, Tiers[number]>();
 	private readonly cacheTimeout = new Map<Key, ReturnType<typeof setTimeout> | undefined>();
-	private readonly logger: MapLogger<TieredCacheLogMapType>;
+	public readonly logger: MapLogger<TieredCacheLogMapType>;
 	private statusData: Readonly<TieredCacheStatus<Tiers>>;
 	constructor(logger?: ILoggerLike, logMapping?: Partial<ExpireCacheLogMapType>) {
 		super();
@@ -217,14 +216,6 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 
 	public status(): Readonly<TieredCacheStatus<Tiers>> {
 		return this.buildStatus(false);
-	}
-
-	public setLogger(logger: ILoggerLike | undefined): void {
-		this.logger.setLogger(logger);
-	}
-
-	public setLogMapping(logMapping: Partial<ExpireCacheLogMapType>): void {
-		this.logger.setLogMapping(logMapping);
 	}
 
 	private setTimeout(key: Key, timeout: number | undefined) {

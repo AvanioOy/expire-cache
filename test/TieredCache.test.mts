@@ -43,8 +43,6 @@ describe('TieredCache cache', () => {
 	beforeEach(function () {
 		cache = new DateTieredCache(spyLogger, logLevelMap);
 		cache.on('update', statusUpdateSpy);
-		cache.setLogger(spyLogger);
-		cache.setLogMapping(logLevelMap);
 		traceSpy.resetHistory();
 		infoSpy.resetHistory();
 		warnSpy.resetHistory();

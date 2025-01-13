@@ -46,8 +46,6 @@ describe('Expire Cache', function () {
 		cache = new ExpireCache<string>(spyLogger, logLevelMap);
 		cache.on('expires', onExpiresSpy);
 		cache.setExpireMs(undefined);
-		cache.setLogger(spyLogger);
-		cache.setLogMapping(logLevelMap);
 	});
 	it('should return undefined value if not cached yet', function () {
 		expect(cache.get('key')).to.be.undefined;

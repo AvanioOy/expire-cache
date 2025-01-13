@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import {type ILoggerLike, type ISetLogMapping, LogLevel, type LogMapping, MapLogger} from '@avanio/logger-like';
+import {type ILoggerLike, LogLevel, type LogMapInfer, MapLogger} from '@avanio/logger-like';
 import {type CacheEventsMap, type ICacheWithEvents} from '@luolapeikko/cache-types';
 import {type ExpireCacheLogMapType} from './ExpireCache.mjs';
 
@@ -25,9 +25,11 @@ const defaultLogMap = {
 	onExpire: LogLevel.None,
 	set: LogLevel.None,
 	size: LogLevel.None,
-} as const;
+} satisfies ExpireCacheLogMapType;
 
-export type ExpireTimeoutCacheLogMapType = LogMapping<keyof typeof defaultLogMap>;
+export type ExpireTimeoutCacheLogMapType = LogMapInfer<typeof defaultLogMap>;
+
+type TimeoutObjectType = {timeout: ReturnType<typeof setTimeout> | undefined; expires: Date | undefined};
 
 /**
  * ExpireCache class that implements the ICache interface with value expiration and expires with setTimeout
@@ -35,13 +37,10 @@ export type ExpireTimeoutCacheLogMapType = LogMapping<keyof typeof defaultLogMap
  * @template Key - (optional) The type of the cache key (default is string)
  * @since v0.6.5
  */
-export class ExpireTimeoutCache<Payload, Key = string>
-	extends EventEmitter<CacheEventsMap<Payload, Key>>
-	implements ICacheWithEvents<Payload, Key>, ISetLogMapping<ExpireTimeoutCacheLogMapType>
-{
+export class ExpireTimeoutCache<Payload, Key = string> extends EventEmitter<CacheEventsMap<Payload, Key>> implements ICacheWithEvents<Payload, Key> {
 	private readonly cache = new Map<Key, Payload>();
-	private readonly cacheTimeout = new Map<Key, {timeout: ReturnType<typeof setTimeout> | undefined; expires: Date | undefined}>();
-	private readonly logger: MapLogger<ExpireCacheLogMapType>;
+	private readonly cacheTimeout = new Map<Key, TimeoutObjectType>();
+	public readonly logger: MapLogger<ExpireTimeoutCacheLogMapType>;
 	private defaultExpireMs: undefined | number;
 	/**
 	 * Creates a new instance of the ExpireTimeoutCache class
@@ -49,22 +48,20 @@ export class ExpireTimeoutCache<Payload, Key = string>
 	 * @param logMapping - The log mapping to use (optional). Default is all logging disabled
 	 * @param defaultExpireMs - The default expiration time in milliseconds (optional)
 	 */
-	constructor(logger?: ILoggerLike, logMapping?: Partial<ExpireCacheLogMapType>, defaultExpireMs?: number) {
+	constructor(logger?: ILoggerLike, logMapping?: Partial<ExpireTimeoutCacheLogMapType>, defaultExpireMs?: number) {
 		super();
-		this.logger = new MapLogger<ExpireCacheLogMapType>(logger, Object.assign({}, defaultLogMap, logMapping));
+		this.logger = new MapLogger<ExpireTimeoutCacheLogMapType>(logger, Object.assign({}, defaultLogMap, logMapping));
 		this.logger.logKey('constructor', `ExpireTimeoutCache created, defaultExpireMs: ${String(defaultExpireMs)}`);
 		this.defaultExpireMs = defaultExpireMs;
 	}
 
 	public set(key: Key, data: Payload, expires?: Date) {
 		this.clearTimeout(key);
-		const expiresDate = this.getExpireDate(expires);
-		const expireTs = expiresDate && expiresDate.getTime() - Date.now();
-		const expireString = expireTs ? `${expireTs.toString()} ms` : 'undefined';
+		const {expiresInMs, ...options} = this.handleTimeoutSetup(key, this.getExpireDate(expires));
+		const expireString = expiresInMs ? `${expiresInMs.toString()} ms` : 'undefined';
 		this.logger.logKey('set', `ExpireTimeoutCache set key: ${String(key)}, expireTs: ${expireString}`);
-		const timeout = expireTs ? setTimeout(() => this.handleExpiredCallback(key), expireTs) : undefined;
 		this.cache.set(key, data);
-		this.cacheTimeout.set(key, {timeout, expires: expiresDate});
+		this.cacheTimeout.set(key, options);
 	}
 
 	public get(key: Key) {
@@ -129,14 +126,6 @@ export class ExpireTimeoutCache<Payload, Key = string>
 		this.defaultExpireMs = expireMs;
 	}
 
-	public setLogger(logger: ILoggerLike | undefined): void {
-		this.logger.setLogger(logger);
-	}
-
-	public setLogMapping(logMapping: Partial<ExpireCacheLogMapType>): void {
-		this.logger.setLogMapping(logMapping);
-	}
-
 	private clearTimeout(key: Key) {
 		const entry = this.cacheTimeout.get(key);
 		if (entry?.timeout) {
@@ -164,5 +153,11 @@ export class ExpireTimeoutCache<Payload, Key = string>
 		}
 		this.delete(key);
 		this.emit('delete', key);
+	}
+
+	private handleTimeoutSetup(key: Key, expiresDate: Date | undefined): TimeoutObjectType & {expiresInMs: number | undefined} {
+		const expiresInMs = expiresDate && expiresDate.getTime() - Date.now();
+		const timeout = expiresInMs ? setTimeout(() => this.handleExpiredCallback(key), expiresInMs) : undefined;
+		return {expiresInMs, timeout, expires: expiresDate};
 	}
 }

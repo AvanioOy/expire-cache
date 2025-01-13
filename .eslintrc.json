@@ -19,13 +19,14 @@
     "rules": {
 		"sort-imports": "off",
 		"import/order": [
-			"error",
+			"warn",
 			{
 				"groups": ["builtin", "external", "parent", "sibling", "index"],
 				"alphabetize": {
 					"order": "asc",
 					"caseInsensitive": true
 				},
+				"named": true,
 				"newlines-between": "never"
 			}
 		],
