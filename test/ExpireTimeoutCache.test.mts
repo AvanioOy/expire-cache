@@ -90,6 +90,7 @@ describe('Expire Timeout Cache', function () {
 		expect(traceSpy.getCall(3).firstArg).to.be.equal('ExpireTimeoutCache size: 0');
 		expect(traceSpy.getCall(4).firstArg).to.be.equal('ExpireTimeoutCache get key: key');
 		expect(traceSpy.getCall(5).firstArg).to.be.equal('ExpireTimeoutCache size: 0');
+		expect(onExpiresSpy.callCount).to.be.equal(1);
 		expect(onExpiresSpy.getCall(0).args).to.be.eql(['key', 'value']); // onExpire called
 	});
 	it('should return undefined value if deleted', function () {

@@ -147,17 +147,12 @@ export class ExpireTimeoutCache<Payload, Key = string> extends EventEmitter<Cach
 
 	private handleExpiredCallback(key: Key) {
 		this.logger.logKey('onExpire', `ExpireTimeoutCache onExpire key: ${String(key)}`);
-		const entry = this.cache.get(key);
-		if (entry) {
-			this.notifyExpires(new Map<Key, Payload>([[key, entry]]));
-		}
 		this.delete(key);
-		this.emit('delete', key);
 	}
 
 	private handleTimeoutSetup(key: Key, expiresDate: Date | undefined): TimeoutObjectType & {expiresInMs: number | undefined} {
 		const expiresInMs = expiresDate && expiresDate.getTime() - Date.now();
-		const timeout = expiresInMs ? setTimeout(() => this.handleExpiredCallback(key), expiresInMs) : undefined;
+		const timeout = expiresInMs !== undefined ? setTimeout(() => this.handleExpiredCallback(key), expiresInMs) : undefined;
 		return {expiresInMs, timeout, expires: expiresDate};
 	}
 }
