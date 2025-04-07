@@ -25,11 +25,11 @@ const logLevelMap: ExpireCacheLogMapType = {
 	clear: LogLevel.Trace,
 	constructor: LogLevel.Trace,
 	delete: LogLevel.Trace,
+	expires: LogLevel.Trace,
 	get: LogLevel.Trace,
-	set: LogLevel.Trace,
 	has: LogLevel.Trace,
 	onExpire: LogLevel.None,
-	expires: LogLevel.Trace,
+	set: LogLevel.Trace,
 	size: LogLevel.Trace,
 };
 
@@ -47,7 +47,7 @@ describe('Expire Timeout Cache', function () {
 		cache.setExpireMs(undefined);
 	});
 	it('should return undefined value if not cached yet', function () {
-		expect(cache.get('key')).to.be.undefined;
+		expect(cache.get('key')).to.be.eq(undefined);
 		expect(cache.size()).to.be.equal(0);
 		expect(traceSpy.callCount).to.be.equal(3);
 		expect(traceSpy.getCall(0).firstArg).to.be.equal('ExpireTimeoutCache created, defaultExpireMs: undefined');
@@ -81,7 +81,7 @@ describe('Expire Timeout Cache', function () {
 		cache.set('key', 'value', new Date(Date.now() + 5)); // epires in 1ms
 		await new Promise((resolve) => setTimeout(resolve, 10));
 		expect(cache.size()).to.be.equal(0); // expired
-		expect(cache.get('key')).to.be.undefined;
+		expect(cache.get('key')).to.be.eq(undefined);
 		expect(cache.size()).to.be.equal(0);
 		expect(traceSpy.callCount).to.be.equal(6);
 		expect(traceSpy.getCall(0).firstArg).to.be.equal('ExpireTimeoutCache created, defaultExpireMs: undefined');
@@ -100,7 +100,7 @@ describe('Expire Timeout Cache', function () {
 		expect(traceSpy.getCall(0).firstArg).to.be.equal('ExpireTimeoutCache created, defaultExpireMs: undefined');
 		expect(traceSpy.getCall(1).firstArg).to.be.equal('ExpireTimeoutCache set key: key, expireTs: undefined');
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireTimeoutCache delete key: key');
-		expect(cache.get('key')).to.be.undefined;
+		expect(cache.get('key')).to.be.eq(undefined);
 	});
 	it('should return undefined value if cleared', function () {
 		cache.set('key', 'value');
@@ -109,13 +109,13 @@ describe('Expire Timeout Cache', function () {
 		expect(traceSpy.getCall(0).firstArg).to.be.equal('ExpireTimeoutCache created, defaultExpireMs: undefined');
 		expect(traceSpy.getCall(1).firstArg).to.be.equal('ExpireTimeoutCache set key: key, expireTs: undefined');
 		expect(traceSpy.getCall(2).firstArg).to.be.equal('ExpireTimeoutCache clear');
-		expect(cache.get('key')).to.be.undefined;
+		expect(cache.get('key')).to.be.eq(undefined);
 	});
 	it('should have default expiration time', async function () {
 		cache = new ExpireTimeoutCache<string>(spyLogger, undefined, 100);
 		cache.set('key', 'value');
 		expect(cache.get('key')).to.equal('value');
 		await new Promise((resolve) => setTimeout(resolve, 150));
-		expect(cache.get('key')).to.be.undefined;
+		expect(cache.get('key')).to.be.eq(undefined);
 	});
 });

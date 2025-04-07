@@ -62,10 +62,6 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 		this.statusData = {size: 0, tiers: {...this.getInitialStatusData()}};
 	}
 
-	private logCacheName() {
-		this.logger.logKey('constructor', `MultiTierCache ${this.cacheName} created`);
-	}
-
 	/**
 	 * Get cache entry from cache
 	 * @param key - cache key
@@ -190,8 +186,7 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 	}
 
 	public delete(key: Key): boolean {
-		this.clearTimeoutKey(key);
-		const isDeleted = this.cache.delete(key);
+		const isDeleted = this.handleDeleteValue(key);
 		if (isDeleted) {
 			this.logger.logKey('delete', `MultiTierCache ${this.cacheName} delete: '${String(key)}'`);
 			this.emit('delete', [key]);
@@ -218,6 +213,49 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 		return this.buildStatus(false);
 	}
 
+	protected buildStatus(rebuild: boolean): Readonly<TieredCacheStatus<Tiers>> {
+		if (!rebuild) {
+			return this.statusData;
+		}
+		this.statusData = Object.freeze({
+			size: this.cache.size,
+			tiers: Array.from(this.cache.values()).reduce<TierStatusRecord<Tiers>>(
+				(acc, {tier: type}) => {
+					acc[type as keyof TierStatusRecord<Tiers>]++;
+					return acc;
+				},
+				{...this.getInitialStatusData()},
+			),
+		});
+		return this.statusData;
+	}
+
+	/**
+	 * Internal helper to set cache entry and set timeout
+	 * @param key - cache entry key
+	 * @param tier - cache entry tier
+	 * @param data - cache entry data
+	 * @param timeout - timeout value, optional
+	 */
+	protected async handleSetValue<T extends Tiers[number]>(key: Key, tier: T['tier'], data: T['data'], timeout?: TimeoutEnum) {
+		this.cache.set(key, {tier, data});
+		this.setTimeout(key, timeout ?? (await this.handleTimeoutValue(key, tier, data)));
+	}
+
+	/**
+	 * Internal helper to delete cache entry and cancel its timeout
+	 * @param key - cache entry key
+	 * @returns true if entry was deleted, false if not found
+	 */
+	protected handleDeleteValue(key: Key): boolean {
+		this.clearTimeoutKey(key);
+		return this.cache.delete(key);
+	}
+
+	private logCacheName() {
+		this.logger.logKey('constructor', `MultiTierCache ${this.cacheName} created`);
+	}
+
 	private setTimeout(key: Key, timeout: number | undefined) {
 		const oldTimeout = this.cacheTimeout.get(key);
 		if (oldTimeout) {
@@ -226,7 +264,7 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 		if (timeout !== undefined) {
 			this.cacheTimeout.set(
 				key,
-				setTimeout(async () => this.runTimeout(key), timeout),
+				setTimeout(() => void this.runTimeout(key), timeout),
 			);
 			this.logger.logKey('setTimeout', `MultiTierCache ${this.cacheName} setTimeout: '${String(key)}' = timeouts: ${timeout.toString()}`);
 		}
@@ -267,14 +305,6 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 		}
 	}
 
-	/**
-	 * Typed helper to set cache entry and timeouts
-	 */
-	protected async handleSetValue<T extends Tiers[number]>(key: Key, tier: T['tier'], data: T['data'], timeout?: TimeoutEnum) {
-		this.cache.set(key, {tier, data});
-		this.setTimeout(key, timeout || (await this.handleTimeoutValue(key, tier, data)));
-	}
-
 	protected abstract handleCacheEntry<T extends Tiers[number]>(
 		key: Key,
 		tier: T['tier'],
@@ -306,21 +336,4 @@ export abstract class TieredCache<Tiers extends TierType<unknown, string>[], Tim
 	 * }
 	 */
 	protected abstract getInitialStatusData(): Readonly<TierStatusInitialRecord<Tiers>>;
-
-	protected buildStatus(rebuild: boolean): Readonly<TieredCacheStatus<Tiers>> {
-		if (!rebuild) {
-			return this.statusData;
-		}
-		this.statusData = Object.freeze({
-			size: this.cache.size,
-			tiers: Array.from(this.cache.values()).reduce<TierStatusRecord<Tiers>>(
-				(acc, {tier: type}) => {
-					acc[type as keyof TierStatusRecord<Tiers>]++;
-					return acc;
-				},
-				{...this.getInitialStatusData()},
-			),
-		});
-		return this.statusData;
-	}
 }

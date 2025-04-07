@@ -22,15 +22,15 @@ const spyLogger: ILoggerLike = {
 
 const logLevelMap: TieredCacheLogMapType = {
 	clear: LogLevel.Trace,
+	clearTimeoutKey: LogLevel.Trace,
 	constructor: LogLevel.Trace,
 	delete: LogLevel.Trace,
 	get: LogLevel.None,
 	has: LogLevel.Trace,
 	runTimeout: LogLevel.Trace,
-	size: LogLevel.Trace,
 	set: LogLevel.None,
 	setTimeout: LogLevel.Trace,
-	clearTimeoutKey: LogLevel.Trace,
+	size: LogLevel.Trace,
 };
 
 function sleep(ms: number) {

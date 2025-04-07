@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {type GetCacheTier, TieredCache, type TierStatusInitialRecord, type TierType} from '../../src/index.mjs';
 
 type DateCacheTiers = [TierType<Date, 'model'>, TierType<{$cdate: number}, 'object'>, TierType<string, 'stringValue'>];

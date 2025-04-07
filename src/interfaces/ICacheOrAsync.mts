@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-deprecated */
-/* eslint-disable deprecation/deprecation */
 import {type IAsyncCache} from './IAsyncCache.mjs';
 import {type ICache} from './ICache.mjs';
 

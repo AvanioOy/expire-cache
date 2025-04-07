@@ -1,6 +1,0 @@
-dist
-node_modules
-.devcontainer
-*.cjs
-*.mjs
-vite.config.mts
